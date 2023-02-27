@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Atlas
 {
@@ -15,10 +12,10 @@ namespace Atlas
             //"E:\\Downloads",
             "E:\\Music",
             //"E:\\Videos",
-            //"E:\\Pictures"
+            "E:\\Pictures"
         };
 
         public bool Encrypt = true;
-        public String EncryptionPassword = "password"; 
+        public String Encryption_Password = "password";
     }
 }

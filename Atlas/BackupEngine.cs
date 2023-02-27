@@ -1,24 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO.Compression;
 
 namespace Atlas
 {
     internal class BackupEngine
     {
-        Settings Backup_Settings = null;
-        public BackupEngine(Settings pBackup_Settings) 
+        private readonly Settings Backup_Settings = null;
+        private readonly EncryptionEngine EncryptionEngine = null;
+
+        public BackupEngine(Settings pBackup_Settings)
         {
             Backup_Settings = pBackup_Settings;
+            EncryptionEngine = new EncryptionEngine(Backup_Settings.Encryption_Password);
         }
-        EncryptionEngine EncryptionEngine = new EncryptionEngine();
-        
-        private void CopyFilesRecursively(string Source_Path, string Target_Path)
+
+
+        private void CopyFiles(string Source_Path, string Target_Path)
         {
             foreach (string DirPath in Directory.GetDirectories(Source_Path, "*", SearchOption.AllDirectories))
             {
@@ -31,13 +30,30 @@ namespace Atlas
                 String NewPath = OldPath.Replace(Source_Path, Target_Path);
                 Debug.WriteLine("[*] Copying File: " + OldPath + " To: " + NewPath);
                 File.Copy(OldPath, NewPath, true);
-
-                if(Backup_Settings.Encrypt) { EncryptionEngine.AES_Encrypt(NewPath, Backup_Settings.EncryptionPassword); }
-                
             }
         }
 
-        public void CreateNewFileBackup()
+        private String PackageBackup(DirectoryInfo pBackup_Dir)
+        {
+            Debug.WriteLine("\n\n[*] Packaging Backup");
+            String Zip_Path = Path.Combine(Backup_Settings.Root_Backup_Dir, DateTime.Now.ToLongDateString());
+
+            ZipFile.CreateFromDirectory(
+                pBackup_Dir.FullName,
+                Zip_Path,
+                CompressionLevel.Optimal,
+                false
+            );
+
+            if (Backup_Settings.Encrypt) { EncryptionEngine.Encrypt(Zip_Path); }
+            else { File.Move(Zip_Path, Path.ChangeExtension(Zip_Path, "zip")); }
+
+            Directory.Delete(pBackup_Dir.FullName, true);
+
+            return Zip_Path;
+        }
+
+        public String CreateNewFileBackup()
         {
             DirectoryInfo Backup_Dir = Directory.CreateDirectory(Path.Combine(Backup_Settings.Root_Backup_Dir, "Temp"));
 
@@ -47,20 +63,10 @@ namespace Atlas
                 DirectoryInfo DirPathCopyDir = Backup_Dir.CreateSubdirectory(DirPathName);
 
                 Debug.WriteLine("\n\n[*] Backing Up: " + DirPath);
-                CopyFilesRecursively(DirPath, DirPathCopyDir.FullName);
-
-                ZipFile.CreateFromDirectory(
-                    Backup_Dir.FullName, 
-                    Path.Combine(
-                        Backup_Settings.Root_Backup_Dir, 
-                        System.DateTime.Now.ToLongDateString() + ".zip"
-                    ), 
-                    CompressionLevel.Optimal, 
-                    false
-                );
-
-                Directory.Delete(Backup_Dir.FullName, true);
+                CopyFiles(DirPath, DirPathCopyDir.FullName);
             }
+
+            return PackageBackup(Backup_Dir);
         }
     }
 }

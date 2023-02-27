@@ -1,17 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Atlas
 {
     internal class EncryptionEngine
     {
+        private String Password = null;
+
+        RijndaelManaged AES = new RijndaelManaged();
+
+        public EncryptionEngine(String pPassword)
+        {
+            Password = pPassword;
+
+            AES.KeySize = 256;
+            AES.BlockSize = 128;
+            AES.Padding = PaddingMode.PKCS7;
+            AES.Mode = CipherMode.CFB;
+        }
         public static byte[] GenerateRandomSalt()
         {
             byte[] Data = new byte[32];
@@ -26,22 +34,15 @@ namespace Atlas
             return Data;
         }
 
-        public void AES_Encrypt(string pInputFile, string pPassword)
+        public void Encrypt(string pInputFile)
         {
             byte[] Salt = GenerateRandomSalt();
             FileStream fsCrypt = new FileStream(pInputFile + ".backup", FileMode.Create);
-            byte[] PasswordBytes = System.Text.Encoding.UTF8.GetBytes(pPassword);
-
-            RijndaelManaged AES = new RijndaelManaged();
-            AES.KeySize = 256;
-            AES.BlockSize = 128;
-            AES.Padding = PaddingMode.PKCS7;
+            byte[] PasswordBytes = System.Text.Encoding.UTF8.GetBytes(Password);
 
             var Key = new Rfc2898DeriveBytes(PasswordBytes, Salt, 50000);
             AES.Key = Key.GetBytes(AES.KeySize / 8);
-            AES.IV  = Key.GetBytes(AES.BlockSize / 8);
-
-            AES.Mode = CipherMode.CFB;
+            AES.IV = Key.GetBytes(AES.BlockSize / 8);
 
             fsCrypt.Write(Salt, 0, Salt.Length);
 
@@ -74,27 +75,23 @@ namespace Atlas
             File.Delete(pInputFile);
         }
 
-        public void AES_Decrypt(string pInputFile, string pPassword)
+        public void Decrypt(string pInputFile)
         {
-            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(pPassword);
+            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(Password);
             byte[] salt = new byte[32];
 
             FileStream fsCrypt = new FileStream(pInputFile, FileMode.Open);
             fsCrypt.Read(salt, 0, salt.Length);
 
-            RijndaelManaged AES = new RijndaelManaged();
-            AES.KeySize = 256;
-            AES.BlockSize = 128;
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
             AES.Key = key.GetBytes(AES.KeySize / 8);
             AES.IV = key.GetBytes(AES.BlockSize / 8);
-            AES.Padding = PaddingMode.PKCS7;
-            AES.Mode = CipherMode.CFB;
 
             CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateDecryptor(), CryptoStreamMode.Read);
 
+            String Output_Path = Path.Combine(Path.GetDirectoryName(pInputFile), Path.ChangeExtension(pInputFile, "zip"));
             FileStream fsOut = new FileStream(
-                Path.GetFileNameWithoutExtension(pInputFile), 
+                Output_Path,
                 FileMode.Create
             );
 
@@ -108,7 +105,7 @@ namespace Atlas
                     fsOut.Write(buffer, 0, read);
                 }
             }
-            catch (System.Security.Cryptography.CryptographicException ex_CryptographicException)
+            catch (CryptographicException ex_CryptographicException)
             {
                 Debug.WriteLine("\n\n[-] CryptographicException error: " + ex_CryptographicException.Message);
             }
