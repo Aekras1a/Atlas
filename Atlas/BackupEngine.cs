@@ -45,8 +45,15 @@ namespace Atlas
                 false
             );
 
-            if (Backup_Settings.Encrypt) { EncryptionEngine.Encrypt(Zip_Path); }
-            else { File.Move(Zip_Path, Path.ChangeExtension(Zip_Path, "zip")); }
+            if (Backup_Settings.Encrypt) 
+            { 
+                EncryptionEngine.Encrypt(Zip_Path);
+                Zip_Path = Path.ChangeExtension(Zip_Path, "backup");
+            }
+            else 
+            { 
+                File.Move(Zip_Path, Path.ChangeExtension(Zip_Path, "zip")); 
+            }
 
             Directory.Delete(pBackup_Dir.FullName, true);
 

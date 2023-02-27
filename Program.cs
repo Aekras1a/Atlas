@@ -9,7 +9,8 @@ namespace Atlas
         
         static void Main(string[] args)
         {
-            Backup_Engine.CreateNewFileBackup();
+            String Backup_File = Backup_Engine.CreateNewFileBackup();
+            //TestDecryption(Backup_File);
         }
 
         static void TestDecryption(String pInputPath)
