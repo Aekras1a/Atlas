@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Atlas
 {
@@ -16,26 +18,70 @@ namespace Atlas
             EncryptionEngine = new EncryptionEngine(Backup_Settings.Encryption_Password);
         }
 
-
         private void CopyFiles(string Source_Path, string Target_Path)
         {
-            foreach (string DirPath in Directory.GetDirectories(Source_Path, "*", SearchOption.AllDirectories))
+            int Max_Threads = Backup_Settings.Max_Threads;
+
+            if (!Directory.Exists(Source_Path))
             {
-                Debug.WriteLine("[*] Creating Directory: " + DirPath.Replace(Source_Path, Target_Path));
-                Directory.CreateDirectory(DirPath.Replace(Source_Path, Target_Path));
+                Debug.WriteLine("[*] Source directory does not exist: " + Source_Path);
+                return;
             }
 
-            foreach (string OldPath in Directory.GetFiles(Source_Path, "*.*", SearchOption.AllDirectories))
+            if (!Directory.Exists(Target_Path))
             {
-                String NewPath = OldPath.Replace(Source_Path, Target_Path);
-                Debug.WriteLine("[*] Copying File: " + OldPath + " To: " + NewPath);
-                File.Copy(OldPath, NewPath, true);
+                Debug.WriteLine("[*] Target directory does not exist: " + Target_Path);
+                return;
+            }
+
+            try
+            {
+                string sourceRoot = Path.GetFullPath(Source_Path);
+                string targetRoot = Path.GetFullPath(Target_Path);
+
+                // Get a list of all the directories to create
+                var directories = Directory.GetDirectories(Source_Path, "*", SearchOption.AllDirectories)
+                    .Select(dirPath => Path.GetFullPath(dirPath))
+                    .Select(dirPath => Path.Combine(targetRoot, dirPath.Substring(sourceRoot.Length + 1)))
+                    .ToList();
+
+                // Create all the directories in parallel
+                var options = new ParallelOptions();
+                if (Max_Threads > 0)
+                {
+                    options.MaxDegreeOfParallelism = Max_Threads;
+                }
+                Parallel.ForEach(directories, options, directoryPath =>
+                {
+                    Debug.WriteLine("[*] Creating Directory: " + directoryPath);
+                    Directory.CreateDirectory(directoryPath);
+                });
+
+                // Get a list of all the files to copy
+                var files = Directory.GetFiles(Source_Path, "*.*", SearchOption.AllDirectories)
+                    .Select(filePath => Path.GetFullPath(filePath))
+                    .Select(filePath => new { Source = filePath, Target = Path.Combine(targetRoot, filePath.Substring(sourceRoot.Length + 1)) })
+                    .ToList();
+
+                // Copy all the files in parallel
+                Parallel.ForEach(files, options, file =>
+                {
+                    Debug.WriteLine("[*] Copying File: " + file.Source + " To: " + file.Target);
+                    Console.WriteLine("[*] Copying File: " + file.Source + " To: " + file.Target);
+                    File.Copy(file.Source, file.Target, true);
+                });
+            }
+            catch (IOException ex)
+            {
+                Debug.WriteLine("[*] Error copying files: " + ex.Message);
             }
         }
+
 
         private String PackageBackup(DirectoryInfo pBackup_Dir)
         {
             Debug.WriteLine("\n\n[*] Packaging Backup");
+            Console.WriteLine("\n\n[*] Packaging Backup");
             String Zip_Path = Path.Combine(Backup_Settings.Root_Backup_Dir, DateTime.Now.ToLongDateString());
 
             ZipFile.CreateFromDirectory(
