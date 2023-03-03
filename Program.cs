@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Atlas
 {
@@ -13,8 +14,8 @@ namespace Atlas
             Stopwatch Timer = new Stopwatch();
             Timer.Start();
 
-            String Backup_File = Backup_Engine.CreateNewFileBackup();
-            //TestDecryption(Backup_File);
+            string Backup_File = Backup_Engine.CreateNewFileBackupAsync().Result;
+            TestDecryption(Backup_File);
 
             Timer.Stop();
             TimeSpan timeTaken = Timer.Elapsed;
@@ -23,6 +24,7 @@ namespace Atlas
 
         static void TestDecryption(String pInputPath)
         {
+            Debug.WriteLine("[*] Decrypting Backup");
             EncryptionEngine EE = new EncryptionEngine(Backup_Settings.Encryption_Password);
             EE.Decrypt(pInputPath);
         }
