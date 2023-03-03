@@ -9,13 +9,13 @@ namespace Atlas
         public List<string> Backup_Dirs = new List<string>() {
             //"E:\\Desktop",
             //"E:\\Documents\\_My Stuff",
-            //"E:\\Downloads",
+            "E:\\Downloads",
             //"E:\\Music",
             //"E:\\Videos",
-            "E:\\Pictures"
+            //"E:\\Pictures"
         };
 
-        public bool Encrypt = true;
+        public bool Encrypt = false;
         public String Encryption_Password = "password";
 
         private enum Threads
@@ -27,6 +27,6 @@ namespace Atlas
             Four = 4
         }
 
-        public int Max_Threads = (int)Threads.Two;
+        public int Max_Threads = (int)Threads.One;
     }
 }

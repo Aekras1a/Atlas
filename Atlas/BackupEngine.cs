@@ -66,8 +66,8 @@ namespace Atlas
                 // Copy all the files in parallel
                 Parallel.ForEach(files, options, file =>
                 {
-                    Debug.WriteLine("[*] Copying File: " + file.Source + " To: " + file.Target);
-                    Console.WriteLine("[*] Copying File: " + file.Source + " To: " + file.Target);
+                    Debug.WriteLine("[*] Copying File: " + file.Source);
+                    Console.WriteLine("[*] Copying File: " + file.Source);
                     File.Copy(file.Source, file.Target, true);
                 });
             }
