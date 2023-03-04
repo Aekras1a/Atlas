@@ -6,27 +6,27 @@ namespace Atlas
 {
     internal class Program
     {
-        static Settings Backup_Settings = new Settings();
-        static BackupEngine Backup_Engine = new BackupEngine(Backup_Settings);
-        
-        static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            Stopwatch Timer = new Stopwatch();
-            Timer.Start();
+            Settings backupSettings = new Settings();
+            BackupEngine backupEngine = new BackupEngine(backupSettings);
 
-            string Backup_File = Backup_Engine.CreateNewFileBackupAsync().Result;
-            TestDecryption(Backup_File);
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
 
-            Timer.Stop();
-            TimeSpan timeTaken = Timer.Elapsed;
-            Debug.WriteLine("\n\n[*]Time taken: " + timeTaken.ToString(@"m\:ss\.fff"));
+            string backupFile = await backupEngine.CreateNewFileBackupAsync();
+            TestDecryption(backupFile, backupSettings);
+
+            timer.Stop();
+            TimeSpan timeTaken = timer.Elapsed;
+            Debug.WriteLine($"[*] Time taken: {timeTaken}", timeTaken.ToString(@"m\:ss\.fff"));
         }
 
-        static void TestDecryption(String pInputPath)
+        private static void TestDecryption(string backupFilePath, Settings backupSettings)
         {
             Debug.WriteLine("[*] Decrypting Backup");
-            EncryptionEngine EE = new EncryptionEngine(Backup_Settings.Encryption_Password);
-            EE.Decrypt(pInputPath);
+            EncryptionEngine encryptionEngine = new EncryptionEngine(backupSettings.encryptionPassword);
+            encryptionEngine.Decrypt(backupFilePath);
         }
     }
 }
