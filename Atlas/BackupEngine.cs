@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -80,6 +81,7 @@ namespace Atlas
 
         private async Task CopyFilesAsync(string sourceDir, Stream targetStream)
         {
+            Debug.WriteLine($"[*] Backing Up: {sourceDir}");
             using (var zipStream = new ZipOutputStream(targetStream))
             {
                 zipStream.SetLevel((int)CompressionLevel.Optimal);
@@ -110,6 +112,7 @@ namespace Atlas
                     zipStream.CloseEntry();
                 }
             }
+            Debug.WriteLine($"[+] Finished Backing Up: {sourceDir}");
         }
 
         /// <summary>
@@ -120,17 +123,21 @@ namespace Atlas
         {
             var backupDir = Directory.CreateDirectory(Path.Combine(backupSettings.rootBackupDir, "Temp"));
 
+            List<Task> backupTasks = new List<Task>();
             foreach (string dirPath in backupSettings.dirsToBackup)
             {
                 string dirCopyDir = Path.Combine(backupDir.FullName, new DirectoryInfo(dirPath).Name);
 
-                Debug.WriteLine($"\n\n[*] Backing Up: {dirPath}");
-
-                using (var stream = new FileStream(Path.Combine(backupDir.FullName, dirCopyDir + "_backup.zip"), FileMode.Create))
+                backupTasks.Add(Task.Run(async () =>
                 {
-                    await CopyFilesAsync(dirPath, stream);
-                }
+                    using (var stream = new FileStream(Path.Combine(backupDir.FullName, dirCopyDir + "_backup.zip"), FileMode.Create))
+                    {
+                        await CopyFilesAsync(dirPath, stream);
+                    }
+                }));
             }
+
+            await Task.WhenAll(backupTasks);
 
             return await PackageBackupAsync(backupDir);
         }
