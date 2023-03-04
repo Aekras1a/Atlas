@@ -81,16 +81,16 @@ namespace Atlas
 
         private async Task CopyFilesAsync(string sourceDir, Stream targetStream)
         {
-            Debug.WriteLine($"[*] Backing Up: {sourceDir}");
+            var totalFiles = Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories).Length;
+            var filesProcessed = 0;
+
             using (var zipStream = new ZipOutputStream(targetStream))
             {
                 zipStream.SetLevel((int)CompressionLevel.Optimal);
 
-                var files = Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories);
-
                 var buffer = new byte[4096];
 
-                foreach (var file in files)
+                foreach (var file in Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories))
                 {
                     var entryName = GetRelativePath(sourceDir, file);
 
@@ -105,14 +105,16 @@ namespace Atlas
                         {
                             bytesRead = await fs.ReadAsync(buffer, 0, buffer.Length);
                             await zipStream.WriteAsync(buffer, 0, bytesRead);
-                        }
-                        while (bytesRead > 0);
+                        } while (bytesRead > 0);
                     }
 
                     zipStream.CloseEntry();
+
+                    filesProcessed++;
+                    var percentageComplete = Math.Round((double)filesProcessed / totalFiles * 100, 2);
+                    Debug.WriteLine($"[*] {sourceDir} : {percentageComplete}%");
                 }
             }
-            Debug.WriteLine($"[+] Finished Backing Up: {sourceDir}");
         }
 
         /// <summary>
@@ -126,8 +128,9 @@ namespace Atlas
             List<Task> backupTasks = new List<Task>();
             foreach (string dirPath in backupSettings.dirsToBackup)
             {
-                string dirCopyDir = Path.Combine(backupDir.FullName, new DirectoryInfo(dirPath).Name);
+                Debug.WriteLine($"[*] Backing Up: {dirPath}");
 
+                string dirCopyDir = Path.Combine(backupDir.FullName, new DirectoryInfo(dirPath).Name);
                 backupTasks.Add(Task.Run(async () =>
                 {
                     using (var stream = new FileStream(Path.Combine(backupDir.FullName, dirCopyDir + "_backup.zip"), FileMode.Create))

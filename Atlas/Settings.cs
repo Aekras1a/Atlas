@@ -8,11 +8,11 @@ namespace Atlas
         public string rootBackupDir = "E:\\_BACKUPS";
 
         public List<string> dirsToBackup = new List<string>() {
-            //"E:\\Desktop",
-            //"E:\\Documents\\_My Stuff",
-            //"E:\\Downloads",
-            //"E:\\Music",
-            //"E:\\Videos",
+            "E:\\Desktop",
+            "E:\\Documents\\_My Stuff",
+            "E:\\Downloads",
+            "E:\\Music",
+            "E:\\Videos",
             "E:\\Pictures"
         };
 
