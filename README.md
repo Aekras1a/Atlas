@@ -4,6 +4,9 @@
 </p>
 Atlas Backup Manager is an open-source project designed to help you easily manage your backups. It provides an intuitive and user-friendly interface to perform backup and restore operations for your files and folders.
 
+###
+[![CodeQL](https://github.com/yatt-ze/Atlas/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/yatt-ze/Atlas/actions/workflows/codeql.yml)
+
 ## Planned Features
 - Easy-to-use web interface
 - Support for multiple backup destinations (local, remote, cloud)
