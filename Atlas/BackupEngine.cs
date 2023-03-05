@@ -83,7 +83,7 @@ namespace Atlas
             var totalFiles = Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories).Length;
             var filesProcessed = 0;
 
-            using (var zipStream = new ZipOutputStream(targetStream))
+            using (var zipStream = new ZipOutputStream(new BufferedStream(targetStream, 4096)))
             {
                 zipStream.SetLevel((int)CompressionLevel.Optimal);
 
