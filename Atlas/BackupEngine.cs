@@ -29,13 +29,35 @@ namespace Atlas
 
         private static string GetRelativePath(string basePath, string targetPath)
         {
+            var isLongPath = basePath.StartsWith(@"\\?\") || targetPath.StartsWith(@"\\?\");
+            if (isLongPath)
+            {
+                basePath = RemoveLongPathPrefix(basePath);
+                targetPath = RemoveLongPathPrefix(targetPath);
+            }
+
             var baseUri = new Uri(basePath.EndsWith("/") ? basePath : basePath + "/");
             var targetUri = new Uri(targetPath);
 
             var relativeUri = baseUri.MakeRelativeUri(targetUri);
             var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
+            if (isLongPath)
+            {
+                relativePath = AddLongPathPrefix(relativePath);
+            }
+
             return relativePath.Replace('/', Path.DirectorySeparatorChar);
+        }
+
+        private static string RemoveLongPathPrefix(string path)
+        {
+            return path.Replace(@"\\?\", "");
+        }
+
+        private static string AddLongPathPrefix(string path)
+        {
+            return @"\\?\" + path;
         }
 
         private async Task<string> PackageBackupAsync(DirectoryInfo backupDir)
