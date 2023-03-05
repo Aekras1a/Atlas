@@ -114,11 +114,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Atlas\BackupEngine.cs" />
-    <Compile Include="Atlas\CommunicationManager.cs" />
+    <Compile Include="Atlas\Communication\CommunicationManager.cs" />
+    <Compile Include="Atlas\Communication\ConnectionManager.cs" />
     <Compile Include="Atlas\EncryptionEngine.cs" />
+    <Compile Include="Atlas\Communication\ConnectionSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Atlas\Settings.cs" />
+    <Compile Include="Atlas\Settings\BackupSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

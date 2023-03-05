@@ -14,14 +14,14 @@ namespace Atlas
     /// </summary>
     internal class BackupEngine
     {
-        private readonly Settings backupSettings = null;
+        private readonly BackupSettings backupSettings = null;
         private readonly EncryptionEngine encryptionEngine = null;
 
         /// <summary>
         /// Initializes a new instance of the BackupEngine class.
         /// </summary>
         /// <param name="pBackup_Settings">The settings for the backup.</param>
-        public BackupEngine(Settings pBackup_Settings)
+        public BackupEngine(BackupSettings pBackup_Settings)
         {
             backupSettings = pBackup_Settings;
             encryptionEngine = new EncryptionEngine(backupSettings.encryptionPassword);
