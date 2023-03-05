@@ -80,7 +80,8 @@ namespace Atlas
 
         private async Task CopyFilesAsync(string sourceDir, Stream targetStream)
         {
-            var totalFiles = Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories).Length;
+            var totalFiles = Directory.GetFiles(@"\\?\" + sourceDir, "*", SearchOption.AllDirectories).Length;
+
             var filesProcessed = 0;
 
             using (var zipStream = new ZipOutputStream(new BufferedStream(targetStream, 4096)))
@@ -89,7 +90,7 @@ namespace Atlas
 
                 var buffer = new byte[4096];
 
-                foreach (var file in Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories))
+                foreach (var file in Directory.GetFiles(@"\\?\" + sourceDir, "*", SearchOption.AllDirectories))
                 {
                     var entryName = GetRelativePath(sourceDir, file);
 

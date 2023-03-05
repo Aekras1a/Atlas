@@ -10,7 +10,7 @@ namespace Atlas
         public List<string> dirsToBackup = new List<string>()
         {
             //"E:\\Desktop",
-            //"E:\\Documents\\_My Stuff",
+            "E:\\Documents\\_My Stuff",
             //"E:\\Downloads",
             //"E:\\Music",
             //"E:\\Videos",
