@@ -35,7 +35,7 @@ namespace Atlas.Atlas
 
                 if (!isUrlValid)
                 {
-                    Debug.WriteLine($"[*] (CommunicationManager) Server address is not a valid URL: {settings.serverAddress}");
+                    Debug.WriteLine($"[*] ({this.GetType().Name}) Server address is not a valid URL: {settings.serverAddress}");
                     throw new Exception($"Server address is not a valid URL: {settings.serverAddress}");
                 }
 
@@ -55,17 +55,17 @@ namespace Atlas.Atlas
 
                     if (!Enum.IsDefined(typeof(ConnectionSettings.vaildResponces), cmd))
                     {
-                        Debug.WriteLine($"[*] (CommunicationManager) Server Response did not contain a valid 'cmd' field.");
+                        Debug.WriteLine($"[*] ({this.GetType().Name}) Server Response did not contain a valid 'cmd' field.");
                         throw new Exception("Server Response did not contain a valid 'cmd' field.");
                     }
 
-                    Debug.WriteLine($"[*] (CommunicationManager) Server Response: {cmd}");
+                    Debug.WriteLine($"[*] ({this.GetType().Name}) Server Response: {cmd}");
                     return cmd;
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[*] (CommunicationManager) Error: {ex.Message}");
+                Debug.WriteLine($"[*] ({this.GetType().Name}) Error: {ex.Message}");
                 throw;
             }
         }

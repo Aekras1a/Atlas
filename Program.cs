@@ -11,6 +11,7 @@ namespace Atlas
     {
         private static async Task Main(string[] args)
         {
+            Debug.WriteLine("[+] (Main) Starting Atlas\n");
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
@@ -19,7 +20,7 @@ namespace Atlas
 
             timer.Stop();
             String timeTaken = timer.Elapsed.ToString(@"m\:ss\.fff");
-            Debug.WriteLine($"[*] (MAIN) Time taken: {timeTaken}");
+            Debug.WriteLine($"\n[*] (Main) Time taken: {timeTaken}");
         }
     }
 }

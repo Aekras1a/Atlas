@@ -36,7 +36,7 @@ namespace Atlas
 
         public void Encrypt(string pInputFile)
         {
-            Debug.WriteLine($"[*] (EncryptionEngine) Encrypting {pInputFile}");
+            Debug.WriteLine($"[*] ({this.GetType().Name}) Encrypting {pInputFile}");
 
             byte[] salt = GenerateRandomSalt();
             FileStream fsCrypt = new FileStream(pInputFile + ".backup", FileMode.Create);
@@ -66,7 +66,7 @@ namespace Atlas
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("[-] (EncryptionEngine) Error: " + ex.Message);
+                Debug.WriteLine($"[-] ({this.GetType().Name}) Error: " + ex.Message);
             }
             finally
             {
@@ -78,7 +78,7 @@ namespace Atlas
 
         public void Decrypt(string pInputFile)
         {
-            Debug.WriteLine($"[*] (EncryptionEngine) Decrypting {pInputFile}");
+            Debug.WriteLine($"[*] ({this.GetType().Name}) Decrypting {pInputFile}");
 
             byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[32];
@@ -110,11 +110,11 @@ namespace Atlas
             }
             catch (CryptographicException ex_CryptographicException)
             {
-                Debug.WriteLine("[-] (EncryptionEngine) CryptographicException error: " + ex_CryptographicException.Message);
+                Debug.WriteLine($"[-] ({this.GetType().Name}) CryptographicException error: " + ex_CryptographicException.Message);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("[-] (EncryptionEngine) Error: " + ex.Message);
+                Debug.WriteLine($"[-] ({this.GetType().Name}) Error: " + ex.Message);
             }
 
             try
@@ -123,7 +123,7 @@ namespace Atlas
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("[-] (EncryptionEngine) Error by closing CryptoStream: " + ex.Message);
+                Debug.WriteLine($"[-] ({this.GetType().Name}) Error by closing CryptoStream: " + ex.Message);
             }
             finally
             {
