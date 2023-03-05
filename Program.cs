@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atlas.Atlas;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -6,25 +7,31 @@ namespace Atlas
 {
     internal class Program
     {
+        private static Settings backupSettings = new Settings();
+
         private static async Task Main(string[] args)
         {
-            Settings backupSettings = new Settings();
-            BackupEngine backupEngine = new BackupEngine(backupSettings);
-
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            string backupFile = await backupEngine.CreateNewFileBackupAsync();
-            TestDecryption(backupFile, backupSettings);
+            CommunicationManager communicationManager = new CommunicationManager(backupSettings);
+            await communicationManager.DoPostRequestAsync(backupSettings.serverEndpoints.getCommand);
 
             timer.Stop();
-            TimeSpan timeTaken = timer.Elapsed;
-            Debug.WriteLine($"[*] Time taken: {timeTaken}", timeTaken.ToString(@"m\:ss\.fff"));
+            String timeTaken = timer.Elapsed.ToString(@"m\:ss\.fff");
+            Debug.WriteLine($"[*] (MAIN) Time taken: {timeTaken}");
+        }
+
+        private static async Task doBackup()
+        {
+            BackupEngine backupEngine = new BackupEngine(backupSettings);
+
+            string backupFile = await backupEngine.CreateNewFileBackupAsync();
+            TestDecryption(backupFile, backupSettings);
         }
 
         private static void TestDecryption(string backupFilePath, Settings backupSettings)
         {
-            Debug.WriteLine("[*] Decrypting Backup");
             EncryptionEngine encryptionEngine = new EncryptionEngine(backupSettings.encryptionPassword);
             encryptionEngine.Decrypt(backupFilePath);
         }

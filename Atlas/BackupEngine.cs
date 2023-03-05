@@ -40,7 +40,7 @@ namespace Atlas
 
         private async Task<string> PackageBackupAsync(DirectoryInfo backupDir)
         {
-            Debug.WriteLine("\n\n[*] Packaging Backup");
+            Debug.WriteLine("[*] (BackupEngine) Packaging Backup");
 
             string zipPath = Path.Combine(backupSettings.rootBackupDir, DateTime.Now.ToLongDateString());
 
@@ -65,7 +65,7 @@ namespace Atlas
 
             if (backupSettings.doEncrypt)
             {
-                Debug.WriteLine("[*] Encrypting Backup");
+                Debug.WriteLine("[*] (BackupEngine) Encrypting Backup");
                 encryptionEngine.Encrypt(zipPath);
                 zipPath = Path.ChangeExtension(zipPath, "backup");
             }
@@ -112,7 +112,7 @@ namespace Atlas
 
                     filesProcessed++;
                     var percentageComplete = Math.Round((double)filesProcessed / totalFiles * 100, 2);
-                    Debug.WriteLine($"[*] {sourceDir} : {percentageComplete}%");
+                    Debug.WriteLine($"[*] (BackupEngine) {sourceDir} : {percentageComplete}%");
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace Atlas
             List<Task> backupTasks = new List<Task>();
             foreach (string dirPath in backupSettings.dirsToBackup)
             {
-                Debug.WriteLine($"[*] Backing Up: {dirPath}");
+                Debug.WriteLine($"[*] (BackupEngine) Backing Up: {dirPath}");
 
                 string dirCopyDir = Path.Combine(backupDir.FullName, new DirectoryInfo(dirPath).Name);
                 backupTasks.Add(Task.Run(async () =>

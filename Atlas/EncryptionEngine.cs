@@ -36,6 +36,8 @@ namespace Atlas
 
         public void Encrypt(string pInputFile)
         {
+            Debug.WriteLine($"[*] (EncryptionEngine) Encrypting {pInputFile}");
+
             byte[] salt = GenerateRandomSalt();
             FileStream fsCrypt = new FileStream(pInputFile + ".backup", FileMode.Create);
             byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
@@ -64,7 +66,7 @@ namespace Atlas
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("\n\n[-] Error: " + ex.Message);
+                Debug.WriteLine("[-] (EncryptionEngine) Error: " + ex.Message);
             }
             finally
             {
@@ -76,6 +78,8 @@ namespace Atlas
 
         public void Decrypt(string pInputFile)
         {
+            Debug.WriteLine($"[*] (EncryptionEngine) Decrypting {pInputFile}");
+
             byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[32];
 
@@ -106,11 +110,11 @@ namespace Atlas
             }
             catch (CryptographicException ex_CryptographicException)
             {
-                Debug.WriteLine("\n\n[-] CryptographicException error: " + ex_CryptographicException.Message);
+                Debug.WriteLine("[-] (EncryptionEngine) CryptographicException error: " + ex_CryptographicException.Message);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("\n\n[-] Error: " + ex.Message);
+                Debug.WriteLine("[-] (EncryptionEngine) Error: " + ex.Message);
             }
 
             try
@@ -119,7 +123,7 @@ namespace Atlas
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("[-] Error by closing CryptoStream: " + ex.Message);
+                Debug.WriteLine("[-] (EncryptionEngine) Error by closing CryptoStream: " + ex.Message);
             }
             finally
             {
