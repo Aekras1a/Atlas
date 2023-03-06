@@ -16,7 +16,14 @@ namespace Atlas
 
         public async Task getCommand()
         {
-            int responce = await connectionManager.SendPostRequestAsync(connectionSettings.serverEndpoints.getCommand, new Dictionary<String, String>() { { "machine_id", machine.hardwareId } });
+            Dictionary<String, String> parameters = new Dictionary<String, String>()
+            {
+                { "machine_id",         machine.hardwareId },
+                { "total_drive_space",  machine.totalDriveSpace.ToString() },
+                { "used_drive_space",   machine.totalUsedDriveSpace.ToString() }
+            };
+
+            int responce = await connectionManager.SendPostRequestAsync(connectionSettings.serverEndpoints.getCommand, parameters);
             switch (responce)
             {
                 case (int)ConnectionSettings.vaildResponces.NA:
