@@ -15,9 +15,11 @@ namespace Atlas.Atlas
         private static ConnectionManager connectionManager = new ConnectionManager(connectionSettings);
         private static BackupEngine backupEngine = new BackupEngine(backupSettings);
 
+        private static Machine machine = new Machine();
+
         public async Task getCommand()
         {
-            int responce = await connectionManager.SendPostRequestAsync(connectionSettings.serverEndpoints.getCommand, new Dictionary<String, String>() { { "machine_id", "value" } });
+            int responce = await connectionManager.SendPostRequestAsync(connectionSettings.serverEndpoints.getCommand, new Dictionary<String, String>() { { "machine_id", machine.hardwareId } });
             switch (responce)
             {
                 case (int)ConnectionSettings.vaildResponces.NA:

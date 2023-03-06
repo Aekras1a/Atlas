@@ -15,8 +15,8 @@ namespace Atlas
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            CommunicationManager communicationManager = new CommunicationManager();
-            await communicationManager.getCommand();
+            //CommunicationManager communicationManager = new CommunicationManager();
+            //await communicationManager.getCommand();
 
             timer.Stop();
             String timeTaken = timer.Elapsed.ToString(@"m\:ss\.fff");
