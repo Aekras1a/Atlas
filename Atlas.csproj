@@ -118,7 +118,7 @@
     <Compile Include="Atlas\Communication\CommunicationManager.cs" />
     <Compile Include="Atlas\Communication\ConnectionManager.cs" />
     <Compile Include="Atlas\EncryptionEngine.cs" />
-    <Compile Include="Atlas\Communication\ConnectionSettings.cs" />
+    <Compile Include="Atlas\Settings\ConnectionSettings.cs" />
     <Compile Include="Atlas\Machine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -5,7 +5,7 @@ using System.Management;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Atlas.Atlas
+namespace Atlas
 {
     internal class Machine
     {
