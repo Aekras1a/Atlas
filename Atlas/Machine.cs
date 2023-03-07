@@ -17,6 +17,7 @@ namespace Atlas
         public readonly long totalUsedDriveSpace;
 
         public String hardwareId = null;
+        public String machineName = null;
 
         public Machine()
         {
@@ -28,6 +29,7 @@ namespace Atlas
             totalUsedDriveSpace = GetTotalDriveSpace(true);
 
             hardwareId = GetHardwareId().ToString();
+            machineName = Environment.MachineName;
         }
 
         private Guid GetHardwareId()

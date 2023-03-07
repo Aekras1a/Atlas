@@ -15,7 +15,8 @@ namespace Atlas
         public dynamic serverEndpoints = new
         {
             getCommand = "/api/get_command",
-            updateStatus = "/api/update_status"
+            updateStatus = "/api/update_status",
+            updateProgres = "/api/update_progress"
         };
     }
 }

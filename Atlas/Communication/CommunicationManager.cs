@@ -19,6 +19,7 @@ namespace Atlas
             Dictionary<String, String> parameters = new Dictionary<String, String>()
             {
                 { "machine_id",         machine.hardwareId },
+                { "machine_name",         machine.machineName },
                 { "total_drive_space",  machine.totalDriveSpace.ToString() },
                 { "used_drive_space",   machine.totalUsedDriveSpace.ToString() }
             };
