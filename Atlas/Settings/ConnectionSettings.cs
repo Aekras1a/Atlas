@@ -1,22 +1,23 @@
 ﻿using System;
+using Sarcasm;
 
 namespace Atlas
 {
     internal class ConnectionSettings
     {
-        public enum vaildResponces
+        public enum vaildResponses
         {
             NA,
-            doFileBackup
+            lockSystemComputerforRansom
         }
 
-        public String serverAddress = "http://localhost/atlas";
+        public String serverAddress = "http://clearly-new-conti-locker.code/atlas";
 
         public dynamic serverEndpoints = new
         {
-            getCommand = "/api/get_command",
-            updateStatus = "/api/update_status",
-            updateProgres = "/api/update_progress"
+            getCommand = "/C2/recv_pingback",
+            updateStatus = "/C2/beginCryptDrives",
+            updateProgres = "/C2/update_progress"
         };
     }
 }
